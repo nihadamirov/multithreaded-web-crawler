@@ -1,0 +1,28 @@
+package com.multithreadedwebcrawler.model;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class JobData {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String url;
+    private String jobTitle;
+
+    public JobData(String url, String jobTitle) {
+        this.url = url;
+        this.jobTitle = jobTitle;
+    }
+}
