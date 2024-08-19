@@ -1,0 +1,15 @@
+package com.multithreadedwebcrawler.request;
+
+import lombok.Builder;
+import lombok.Data;
+
+@Data
+@Builder
+public class ScrapeUrlRequest {
+
+    private Integer pc_status;
+    private Integer original_status;
+    private String rid;
+    private String url;
+    private String body;
+}
