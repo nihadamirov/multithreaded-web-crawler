@@ -8,10 +8,10 @@ import org.springframework.stereotype.Component;
 public class JobDataMapper {
 
     public JobDataDto toDTO(JobData jobData) {
-        return new JobDataDto(jobData.getId(), jobData.getUrl(), jobData.getJobTitle());
+        return new JobDataDto(jobData.getUrl(), jobData.getJobTitle());
     }
 
     public JobData toEntity(JobDataDto jobDataDto) {
-        return new JobData(jobDataDto.url(), jobDataDto.JobTitle());
+        return new JobData(jobDataDto.getUrl(), jobDataDto.getJobTitle());
     }
 }

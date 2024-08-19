@@ -8,6 +8,7 @@ public class MultithreadedWebCrawlerApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(MultithreadedWebCrawlerApplication.class, args);
+
     }
 
 }

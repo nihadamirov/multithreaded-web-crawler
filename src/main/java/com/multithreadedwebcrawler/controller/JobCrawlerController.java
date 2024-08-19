@@ -20,8 +20,8 @@ public class JobCrawlerController {
     private final JobDataMapper jobDataMapper;
 
     @PostMapping("/crawl")
-    public List<JobDataDto> crawlWebsite(@RequestParam String url, @RequestParam String jobTitle) {
-        return webCrawlerService.crawlWebsite(url, jobTitle).stream()
+    public List<JobDataDto> crawlWebsite(@RequestBody JobDataDto jobDataDto) {
+        return webCrawlerService.crawlWebsite(jobDataDto.getUrl(), jobDataDto.getJobTitle()).stream()
                 .map(jobDataMapper::toDTO)
                 .collect(Collectors.toList());
     }
