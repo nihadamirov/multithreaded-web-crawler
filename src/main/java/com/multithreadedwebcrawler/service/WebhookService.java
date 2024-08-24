@@ -17,9 +17,15 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
+
 
 @Slf4j
 @RequiredArgsConstructor
@@ -83,15 +89,54 @@ public class WebhookService {
         Elements hyperLinks = document.getElementsByTag("a");
         List<String> links = new ArrayList<String>();
 
-//        String url = null;
-//        for (Element hyperLink : hyperLinks) {
-//            url = processUrl(hyperLink.attr("href"), baseUrl);
-//            if(url != null) {
-//                links.add(url);
-//            }
-//        }
+        String url = null;
+        for (Element hyperLink : hyperLinks) {
+            url = processUrl(hyperLink.attr("href"), baseUrl);
+            if(url != null) {
+                links.add(url);
+            }
+        }
 
         mainService.pushUrlsToCrawler(links, "child");
     }
 
+    private String processUrl(String href, String baseUrl) {
+        try {
+            if (href != null && !href.isEmpty()) {
+                baseUrl = normalizeUrl(baseUrl);
+                String processedUrl = normalizeUrl(href.startsWith("/") ? baseUrl + href : href);
+
+                if(isValidUrl(processedUrl) && !processedUrl.replace("http://", "").replace("https://", "").equals(baseUrl.replace("http://", "").replace("https://", "")) &&
+                //Only considering the URLs with same hostname
+                        Objects.equals(new URI(processedUrl).getHost(), new URI(baseUrl).getHost())
+                ) {
+                    return processedUrl;
+                }
+
+            }
+
+        } catch (Exception e) {
+
+            log.error("Error in processUrl function: " + e.getMessage());
+        }
+        return null;
+    }
+
+    private boolean isValidUrl(String string) {
+        String urlRegex = "((http|https)://)(www.)?"
+                + "[a-zA-Z0-9@:%._\\+~#?&//=]"
+                + "{2,256}\\.[a-z]"
+                + "{2,6}\\b([-a-zA-Z0-9@:%"
+                + "._\\+~#?&//=]*)";
+        Pattern pattern = Pattern.compile(urlRegex);
+        Matcher matcher = pattern.matcher(string);
+        return matcher.matches();
+    }
+
+    private String normalizeUrl(String url) throws URISyntaxException {
+        url = url.replace("//www.", "//");
+        url = url.split("#")[0];
+        url = url.endsWith("/") ? url.substring(0, url.length() - 1) : url;
+        return url;
+    }
 }
